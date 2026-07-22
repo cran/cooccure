@@ -1,6 +1,6 @@
 Package: cooccure
 Title: Co-Occurrence Network Construction and Manipulation
-Version: 0.1.1
+Version: 0.4.0
 Authors@R: c(
     person("Mohammed", "Saqr", email = "saqr@saqr.me",
            role = c("aut", "cre", "cph")),
@@ -30,10 +30,10 @@ Depends: R (>= 3.5.0)
 URL: https://github.com/mohsaqr/cooccure
 BugReports: https://github.com/mohsaqr/cooccure/issues
 NeedsCompilation: no
-Packaged: 2026-04-22 20:37:56 UTC; mohammedsaqr
+Packaged: 2026-07-22 09:48:19 UTC; mohammedsaqr
 Author: Mohammed Saqr [aut, cre, cph],
   Sonsoles López-Pernas [aut, cph],
   Kamila Misiejuk [aut, cph]
 Maintainer: Mohammed Saqr <saqr@saqr.me>
 Repository: CRAN
-Date/Publication: 2026-04-24 20:20:10 UTC
+Date/Publication: 2026-07-22 13:20:02 UTC

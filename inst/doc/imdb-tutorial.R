@@ -98,8 +98,12 @@ decades <- co(movies, field = "genres", sep = ",",
               split_by = "decade", similarity = "jaccard",
               min_occur = 5, top_n = 5)
 
-decades[decades$group == "2010s", ]
+subset(decades, group == "2010s")
 
+## ----decade-groups------------------------------------------------------------
+decade_summary <- summary(decades)
+
+as.data.frame(decade_summary, what = "groups")
 
 ## ----split-rating-------------------------------------------------------------
 movies$rating_band <- ifelse(movies$averageRating >= 8, "8+", "7-7.9")

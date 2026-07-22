@@ -30,16 +30,20 @@ as_matrix.cooccurrence <- function(x, type = c("normalized", "raw"), ...) {
     return(mat)
   }
 
-  ## Fallback: rebuild from the edge list (used only if attribute is missing).
-  items <- sort(unique(c(x$from, x$to)))
+  ## Fallback: rebuild from the edge list. Used when the matrix attribute is
+  ## absent, which includes split_by results (where a single matrix cannot
+  ## describe several stacked networks). Columns are resolved so that
+  ## Gephi-named output works too.
+  cols <- .co_edge_columns(x)
+  items <- attr(x, "items")
+  if (is.null(items)) items <- sort(unique(c(cols$from, cols$to)))
   k <- length(items)
-  col <- if (type == "raw") "count" else "weight"
+  vals <- if (type == "raw") cols$count else cols$weight
   if (nrow(x) == 0L) {
     return(matrix(0, k, k, dimnames = list(items, items)))
   }
-  i <- match(x$from, items)
-  j <- match(x$to, items)
-  vals <- x[[col]]
+  i <- match(cols$from, items)
+  j <- match(cols$to, items)
   M <- matrix(0, k, k, dimnames = list(items, items))
   M[cbind(i, j)] <- vals
   M[cbind(j, i)] <- vals
@@ -77,8 +81,19 @@ as_igraph.cooccurrence <- function(x, ...) {
     NULL
   }
 
+  ## Resolve edge columns rather than assuming the default names, so that
+  ## output = "gephi" objects (Source/Target/Weight/Count) also convert.
+  cols <- .co_edge_columns(x)
+  edge_df <- data.frame(from = cols$from, to = cols$to,
+                        weight = cols$weight, count = cols$count,
+                        stringsAsFactors = FALSE)
+  if (is.null(vertices)) {
+    vertices <- data.frame(name = sort(unique(c(cols$from, cols$to))),
+                           stringsAsFactors = FALSE)
+  }
+
   igraph::graph_from_data_frame(
-    x[, c("from", "to", "weight", "count")],
+    edge_df,
     directed = FALSE,
     vertices = vertices,
     ...
