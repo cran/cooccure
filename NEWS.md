@@ -1,3 +1,79 @@
+# cooccure 0.5.0
+
+This release collects the changes made since 0.4.0, the current CRAN
+version.
+
+## Directed networks for `similarity = "relative"`
+
+* `similarity = "relative"` divides each row of the count matrix by its sum,
+  so the weight from item A to item B differs from the weight from B to A.
+  The edge list now holds one row per direction instead of one row per pair,
+  and `as_igraph()`, `as_tidygraph()`, `as_cograph()` and `as_netobject()`
+  return directed networks for it. `output = "gephi"` marks these edges
+  `"Directed"`. `threshold` and `top_n` apply to each direction. Printing and
+  `summary()` count ordered pairs for the density of a directed network.
+  The other seven measures are unchanged.
+
+## Converting networks built with `split_by`
+
+* A `split_by` result stacks one network per group. `as_matrix()`,
+  `as_igraph()`, `as_tidygraph()`, `as_cograph()`, `as_netobject()` and
+  `plot()` gain a `group` argument that converts or draws one group's
+  network, with that group's items and transaction count. Without `group`
+  they raise a `cooccure_grouped_input` error, as does
+  `cooccurrence(..., split_by = , output = "igraph" / "cograph" / "matrix")`.
+  Previously these calls combined the groups into one network.
+* For a `split_by` result, the node table (`as.data.frame(x, what = "nodes")`
+  or `as.data.frame(summary(x))`) has one row per node and group, computed
+  within each group, with a leading `group` column.
+
+## Results and accessors
+
+* `summary()` returns a `summary.cooccurrence` object and no longer prints
+  while computing it; printing the object shows the same block as before.
+* New `as.data.frame()` method for `cooccurrence` objects: `what = "edges"`
+  (default) gives the bare edge table, `what = "nodes"` the node table and
+  `what = "groups"` the group table.
+* `as.data.frame()` on a `summary.cooccurrence` object returns the node
+  table (`what = "nodes"`) or the group table (`what = "groups"`).
+* `aggregate_by` results store the summed counts as the raw matrix, so
+  `as_matrix(x, type = "raw")` returns counts; it previously returned the
+  aggregated weights.
+
+## Arguments and conditions
+
+* User-facing errors are classed conditions inheriting from `cooccure_error`
+  (`cooccure_bad_input`, `cooccure_incompatible_args`,
+  `cooccure_grouped_input`, `cooccure_empty_input`,
+  `cooccure_missing_package`), documented under "Conditions" on each help
+  page.
+* `threshold` accepts negative values, which keep weights at or above the
+  value; this allows filtering networks scaled with `scale = "zscore"`.
+  `threshold = 0` still keeps every edge.
+* Columns named in `field`, `by`, `weight_by`, `split_by` and
+  `aggregate_by` are checked before any group is computed, so a misspelled
+  column is reported by name. With `split_by` and `aggregate_by`, a group
+  left without transactions is dropped; any other error in a group is raised
+  with the group named. `aggregate_by` previously dropped such groups
+  without a message.
+* `weight_by` combined with `counting = "fractional"` or
+  `counting = "attention"` raises a `cooccure_incompatible_args` error;
+  the counting method was previously ignored for weighted input.
+
+## Plots
+
+* The heatmap uses a white-to-blue scale for non-negative weights and a
+  red-white-blue scale centered on zero when weights can be negative. The
+  degree distribution uses a color-blind-safe fill.
+
+## Documentation
+
+* New vignette "Co-occurrence networks" and pkgdown guides on input formats,
+  similarity measures, counting, sequences and event logs, comparing groups,
+  exporting, and the verification against `Nestimate::cooccurrence()`, with
+  two case studies on the IMDb data. The earlier IMDb tutorial is divided
+  among them.
+
 # cooccure 0.4.0
 
 * `cooccurrence()` gains a `window =` parameter for sliding-window

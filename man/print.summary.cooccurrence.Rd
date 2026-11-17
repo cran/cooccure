@@ -2,20 +2,32 @@
 % Please edit documentation in R/methods.R
 \name{print.summary.cooccurrence}
 \alias{print.summary.cooccurrence}
-\title{Print a cooccurrence summary}
+\title{Print a co-occurrence network summary}
 \usage{
 \method{print}{summary.cooccurrence}(x, n = 5L, ...)
 }
 \arguments{
 \item{x}{A \code{summary.cooccurrence} object.}
 
-\item{n}{Integer. Number of top nodes/groups to show. Default 5.}
+\item{n}{Number of top nodes and groups to show (default 5).}
 
 \item{...}{Ignored.}
 }
 \value{
-Invisibly returns \code{x}.
+\code{x}, invisibly and unchanged. Called for the printed output.
 }
 \description{
-Print a cooccurrence summary
+\code{print()} shows the network-level block of a \code{\link[=summary.cooccurrence]{summary.cooccurrence()}}
+object: the numbers of nodes, edges and possible edges, density, mean
+degree, isolates, transactions, the parameters used, the range and mean of
+the weights and counts, the top nodes by degree, and the largest groups by
+number of edges. For a \code{split_by} result the pooled metrics and the
+top-node line are omitted, since they are undefined for stacked networks.
+}
+\examples{
+net <- cooccurrence(movies, field = "genres", sep = ",")
+print(summary(net), n = 3)
+}
+\seealso{
+\code{\link[=summary.cooccurrence]{summary.cooccurrence()}}; \code{\link[=as.data.frame.summary.cooccurrence]{as.data.frame.summary.cooccurrence()}}.
 }

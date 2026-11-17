@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{as.data.frame.summary.cooccurrence}
 \alias{as.data.frame.summary.cooccurrence}
-\title{Tidy node or group table from a cooccurrence summary}
+\title{Extract the tables of a co-occurrence network summary}
 \usage{
 \method{as.data.frame}{summary.cooccurrence}(
   x,
@@ -15,27 +15,38 @@
 \arguments{
 \item{x}{A \code{summary.cooccurrence} object.}
 
-\item{row.names}{Passed to \code{\link[base]{as.data.frame}}; unused.}
+\item{row.names, optional}{Unused; present for compatibility with the
+\code{\link[base:as.data.frame]{base::as.data.frame()}} generic.}
 
-\item{optional}{Passed to \code{\link[base]{as.data.frame}}; unused.}
-
-\item{what}{Character. \code{"nodes"} (default) for one row per node with
-degree, strength, count strength, and frequency; \code{"groups"} for one
-row per group when the network was built with \code{split_by}.}
+\item{what}{\code{"nodes"} (default) for the node table, or \code{"groups"} for the
+group table of a \code{split_by} result.}
 
 \item{...}{Ignored.}
 }
 \value{
-A base \code{data.frame}. For \code{what = "nodes"}, one row per
-node; for \code{what = "groups"}, one row per group (zero rows when the
-network was not split).
+A base \code{data.frame}.
+For \code{what = "nodes"}, one row per node (per node and group for a
+\code{split_by} result, with a leading \code{group} column), sorted by degree and
+strength (both decreasing) and then name, with columns \code{node}, \code{degree}
+(number of incident edges), \code{strength} (sum of incident edge weights),
+\code{count_strength} (sum of incident raw counts) and \code{frequency} (number of
+transactions containing the node; \code{NA} when not stored, as for
+\code{aggregate_by} and weighted results).
+For \code{what = "groups"}, one row per group with columns \code{group},
+\code{n_nodes}, \code{n_edges}, \code{possible_edges}, \code{density}, \code{weight_mean} and
+\code{count_sum}; zero rows when the network was not split.
 }
 \description{
-Returns the summary's node-level metrics (one row per node) or its
-group-level metrics (one row per group) as a plain \code{data.frame},
-so callers never have to reach into the summary object's internals.
+\code{as.data.frame()} returns the node table or the group table of a
+\code{\link[=summary.cooccurrence]{summary.cooccurrence()}} object as a plain data frame, so the metrics can
+be sorted, filtered, joined or plotted with ordinary data-frame tools.
 }
 \examples{
-res <- cooccurrence(list(c("A","B","C"), c("B","C"), c("A","C")))
-as.data.frame(summary(res))
+by_decade <- cooccurrence(movies, field = "genres", sep = ",",
+                          split_by = "decade", similarity = "jaccard")
+as.data.frame(summary(by_decade), what = "groups")
+}
+\seealso{
+\code{\link[=summary.cooccurrence]{summary.cooccurrence()}}; \code{\link[=as.data.frame.cooccurrence]{as.data.frame.cooccurrence()}}, which
+returns the same tables directly from the network.
 }
